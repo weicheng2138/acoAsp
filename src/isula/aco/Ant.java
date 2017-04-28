@@ -41,7 +41,7 @@ public abstract class Ant<C, E extends Environment> {
 
     private int currentIndex = 0;
 
-    private List<AntPolicy<C, E>> policies = new ArrayList<AntPolicy<C, E>>();
+    private List<AntPolicy<C, E>> policies = new ArrayList<>();
 
     // TODO(cgavidia): Temporarly, we're using an array of items. It will later
     // evolve to an array of solution components, or a List.
@@ -49,7 +49,7 @@ public abstract class Ant<C, E extends Environment> {
 
     // TODO(cgavidia): This is redundant. Or it should be implemented as another
     // data structure.
-    private Map<C, Boolean> visitedComponents = new HashMap<C, Boolean>();
+    private Map<C, Boolean> visitedComponents = new HashMap<>();
 
 
     /**
@@ -106,11 +106,12 @@ public abstract class Ant<C, E extends Environment> {
         this.policies.add(antPolicy);
     }
 
-    AntPolicy<C, E> getAntPolicy(AntPolicyType policyType, int expectedNumber) {
+    protected AntPolicy<C, E> getAntPolicy(AntPolicyType policyType, int expectedNumber) {
         int numberOfPolicies = 0;
         AntPolicy<C, E> selectedPolicy = null;
 
         for (AntPolicy<C, E> policy : policies) {
+
             if (policyType.equals(policy.getPolicyType())) {
                 selectedPolicy = policy;
                 numberOfPolicies += 1;
@@ -135,18 +136,26 @@ public abstract class Ant<C, E extends Environment> {
     public void selectNextNode(E environment,
                                ConfigurationProvider configurationProvider) {
 
-        AntPolicy<C, E> selectNodePolicity = getAntPolicy(
+        AntPolicy<C, E> selectNodePolicy = getAntPolicy(
                 AntPolicyType.NODE_SELECTION, ONE_POLICY);
 
         // TODO(cgavidia): With this approach, the policy is a shared resource
         // between ants. This doesn't allow parallelism.
-        selectNodePolicity.setAnt(this);
-        boolean policyResult = selectNodePolicity.applyPolicy(environment, configurationProvider);
+        selectNodePolicy.setAnt(this);
+        boolean policyResult = selectNodePolicy.applyPolicy(environment, configurationProvider);
         if (!policyResult) {
-            throw new ConfigurationException("The node selection policy " + selectNodePolicity.getClass().getName() +
+            throw new ConfigurationException("The node selection policy " + selectNodePolicy.getClass().getName() +
                     " wasn't able to select a node.");
         }
     }
+
+    /**
+     * Selects a node and marks it as visited.
+     *
+     * @param environment           Environment where the ant is building a solution.
+     * @param configurationProvider Configuration provider.
+     */
+    public void selectMergingNode(E environment, ConfigurationProvider configurationProvider) {}
 
     /**
      * Improves the quality of the solution produced.
@@ -156,14 +165,17 @@ public abstract class Ant<C, E extends Environment> {
      */
     public void doAfterSolutionIsReady(E environment,
                                        ConfigurationProvider configurationProvider) {
-        AntPolicy<C, E> selectNodePolicity = getAntPolicy(
+        AntPolicy<C, E> selectNodePolicy = getAntPolicy(
                 AntPolicyType.AFTER_SOLUTION_IS_READY, DONT_CHECK_NUMBERS);
 
-        if (selectNodePolicity != null) {
+
+        // optional movement for AS (AcoTspWithIsula), because AS didn't add policy with AntPolicyType.AFTER_SOLUTION_IS_READY
+        // for ACO (AcoAcsTspWithIsula)
+        if (selectNodePolicy != null) {
             // TODO(cgavidia): With this approach, the policy is a shared resource
             // between ants. This doesn't allow parallelism.
-            selectNodePolicity.setAnt(this);
-            selectNodePolicity.applyPolicy(environment, configurationProvider);
+            selectNodePolicy.setAnt(this);
+            selectNodePolicy.applyPolicy(environment, configurationProvider);
         }
     }
 
@@ -210,9 +222,12 @@ public abstract class Ant<C, E extends Environment> {
 
     /**
      * Returns true when the solution build by the current Ant is finished.
+     * Need to be implement with different such as AntForTsp!!!
+     * Practical methods is define in AntForTsp!!!
      *
      * @param environment Environment instance with problem information.
      * @return True if the solution is finished, false otherwise.
+     *
      */
     public abstract boolean isSolutionReady(E environment);
 

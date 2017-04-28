@@ -1,0 +1,13 @@
+NAME: asp5
+TYPE: ASP
+COMMENT: 5 locations in my mind (WeiCheng)
+DIMENSION: 5
+EDGE_WEIGHT_TYPE: EUC_2D
+NODE_COORD_SECTION
+1 0 0.1
+2 1 0.2
+3 2 0.1
+4 3 0.4
+5 5 0.2
+EOF
+

@@ -13,17 +13,13 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * This is the node selection policy used in Ant System algorithms, also known as Random Proportional Rule.
- *
- * @param <C> Class for components of a solution.
- * @param <E> Class representing the Environment.
- * @author Carlos G. Gavidia
+ * Created by kevinhung on 2017/4/21.
  */
-public class RandomNodeSelection<C, E extends Environment> extends
-        AntPolicy<C, E> {
+public class NodeMergingSelection<C, E extends Environment>
+        extends AntPolicy<C, E>{
 
-    public RandomNodeSelection() {
-        super(AntPolicyType.NODE_SELECTION);
+    public NodeMergingSelection() {
+        super(AntPolicyType.MERGING_SELECTION);
     }
 
     @Override
@@ -80,7 +76,6 @@ public class RandomNodeSelection<C, E extends Environment> extends
         double denominator = Double.MIN_VALUE;
         // getAnt().getNeighbourhood(environment) directly gain the unvisited index of city
         for (C possibleMove : getAnt().getNeighbourhood(environment)) {
-//            System.out.println("possibleMove: " + possibleMove);
 
             if (!getAnt().isNodeVisited(possibleMove)
                     && getAnt().isNodeValid(possibleMove)) {
@@ -94,6 +89,7 @@ public class RandomNodeSelection<C, E extends Environment> extends
                 componentsWithProbabilities.put(possibleMove, 0.0);
             }
         }
+
 
         Double totalProbability = 0.0;
         Iterator<Map.Entry<C, Double>> componentWithProbabilitiesIterator = componentsWithProbabilities
@@ -110,8 +106,6 @@ public class RandomNodeSelection<C, E extends Environment> extends
 
             componentWithProbability.setValue(probability);
         }
-
-        System.out.println(componentsWithProbabilities.toString());
 
         if (componentsWithProbabilities.size() < 1) {
             return doIfNoComponentsFound(environment, configurationProvider);
@@ -140,7 +134,7 @@ public class RandomNodeSelection<C, E extends Environment> extends
     private Double getHeuristicTimesPheromone(E environment,
                                               ConfigurationProvider configurationProvider, C possibleMove) {
         // heuristicValue is a distance between
-        // the last city(component) of so far that ant go through (current solution)
+        // the last city (component) of so far that ant go through (current solution)
         // and possibleMove
         // which means { 1/d } -> { η }
         Double heuristicValue = getAnt().getHeuristicValue(
@@ -149,12 +143,13 @@ public class RandomNodeSelection<C, E extends Environment> extends
                 environment
         );
 
+
+
         // pheromoneTrailValue: { τ }
         Double pheromoneTrailValue = getAnt().getPheromoneTrailValue(
                 possibleMove,
                 getAnt().getCurrentIndex(),
                 environment);
-
 
         // one of the { η*τ }
         return Math.pow(heuristicValue,

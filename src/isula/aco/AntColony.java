@@ -103,7 +103,6 @@ public abstract class AntColony<C, E extends Environment> {
     public void buildSolutions(E environment,
                                ConfigurationProvider configurationProvider) {
         logger.log(Level.FINE, "BUILDING ANT SOLUTIONS");
-
         int antCounter = 0;
 
         if (hive.size() == 0) {
@@ -118,12 +117,12 @@ public abstract class AntColony<C, E extends Environment> {
             while (!ant.isSolutionReady(environment)) {
                 ant.selectNextNode(environment, configurationProvider);
             }
-
             ant.doAfterSolutionIsReady(environment, configurationProvider);
 
             logger.log(Level.FINE,
                     "Solution is ready > Cost: " + ant.getSolutionCost(environment)
                             + ", Solution: " + ant.getSolutionAsString());
+
             antCounter++;
         }
     }

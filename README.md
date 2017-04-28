@@ -5,14 +5,14 @@ Isula allows an easy implementation of Ant-Colony Optimization algorithms using 
 Isula in Action
 ---------------
 If you are not familiar with the framework, a good place to start is the classic Travelling Salesman Problem:
-* The Travelling Salesman Problem, using Ant System: https://github.com/cptanalatriste/aco-tsp
-* The Travelling Salesman Problem, using Ant Colony System: https://github.com/cptanalatriste/aco-acs-tsp
+* The Travelling Salesman Problem, using Ant System: https://github.com/cptanalatriste/main.java.aco-tsp
+* The Travelling Salesman Problem, using Ant Colony System: https://github.com/cptanalatriste/main.java.aco-acs-tsp
 
 
 Here are some advanced examples of optimization problems solved with Isula-based algorithms:
-* The Flow-Shop Scheduling  Problem, using Max-Min Ant System: https://github.com/cptanalatriste/aco-flowshop
-* Binary Image Segmentation using Ant System: https://github.com/cptanalatriste/aco-image-thresholding
-* Image Clustering using Max-Min Ant System: https://github.com/cptanalatriste/aco-image-segmentation
+* The Flow-Shop Scheduling  Problem, using Max-Min Ant System: https://github.com/cptanalatriste/main.java.aco-flowshop
+* Binary Image Segmentation using Ant System: https://github.com/cptanalatriste/main.java.aco-image-thresholding
+* Image Clustering using Max-Min Ant System: https://github.com/cptanalatriste/main.java.aco-image-segmentation
 
 An Isula Primer
 ---------------
@@ -50,7 +50,7 @@ Here is a sequence diagram of the `solveProblem()` method, for you to get an ide
 
 Isula will provide you the basic execution flow for an algorithm in the ACO metaheuristic. On a common use case, you can rely on the implementations already available for `AcoProblemSolver` and `AntColony` but you are free to override and extend in case you need it. Take in mind that usually you will need to create your own `Ant` instance according to your project needs, however the base implementation already contains a lot of functionality available. If you need some reference, please take a look to the projects on the "Isula in action" section.
 
-Every ACO algorithm has a set of customized behaviours that are executed during the solution processes: this behaviours can have global impact (`DaemonAction` instances, like pheromone update rules) or only affect an ant and its solution (like component selection rules: they are subclasses of `AntPolicy`). Isula already provides this behaviours for some representative algorithms -take a look at the `isula.aco.algorithms` package- but you might be in the need of defining your own policies or extending the ones already available.
+Every ACO algorithm has a set of customized behaviours that are executed during the solution processes: this behaviours can have global impact (`DaemonAction` instances, like pheromone update rules) or only affect an ant and its solution (like component selection rules: they are subclasses of `AntPolicy`). Isula already provides this behaviours for some representative algorithms -take a look at the `isula.main.java.aco.algorithms` package- but you might be in the need of defining your own policies or extending the ones already available.
 
 Read abour Isula
 ---------------

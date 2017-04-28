@@ -1,12 +1,11 @@
 package isula.aco;
 
+import javax.naming.ConfigurationException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.naming.ConfigurationException;
 
 /**
  * The main component of the framework: Is the one in charge of making a colony
@@ -86,6 +85,9 @@ public class AcoProblemSolver<C, E extends Environment> {
         logger.info("Starting computation at: " + new Date());
         final long startTime = System.nanoTime();
 
+        // pheromone initialization starts form here
+        // also execute three DaemonActions -> StartPheromoneMatrix (PerformEvaporation and getPheromoneUpdatePolicy)
+        // only StartPheromoneMatrix due to DaemonActionType.INITIAL_CONFIGURATION
         applyDaemonActions(DaemonActionType.INITIAL_CONFIGURATION);
 
         logger.info("STARTING ITERATIONS");
@@ -99,7 +101,6 @@ public class AcoProblemSolver<C, E extends Environment> {
         logger.info("Number of iterations: " + numberOfIterations);
 
         int iteration = 0;
-
         while (iteration < numberOfIterations) {
 
             antColony.clearAntSolutions();
@@ -107,6 +108,7 @@ public class AcoProblemSolver<C, E extends Environment> {
 
             // TODO(cgavidia): This should reference the Update Pheromone routine.
             // Maybe with the Policy hierarchy.
+            // AS has two actions PerformEvaporation -> getPheromoneUpdatePolicy (OfflinePheromoneUpdate)
             applyDaemonActions(DaemonActionType.AFTER_ITERATION_CONSTRUCTION);
 
             updateBestSolution(environment);
