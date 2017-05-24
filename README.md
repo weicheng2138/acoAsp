@@ -1,4 +1,4 @@
-# Isula: A Framework for Ant Colony Algorithms
+# Isula: A Framework for ACO and Adaptive Slcing
 
 Isula allows an easy implementation of Ant-Colony Optimization algorithms using the Java Programming Language. It contains the common elements present in the meta-heuristic to allow algorithm designers the reutilization of common behaviors. With Isula, solving optimization problems with Ant Colony can be done in few lines of code.
 
@@ -42,39 +42,3 @@ That's a snippet from the Travelling Salesman Problem solution. Some things to n
 * Isula supports daemon actions -global behaviors- and ant-level policies, such as the ones present in multiple ACO Algorithms. You can add daemon actions to a solver via the `addDaemonActions` method and ant policies to a colony via the `addAntPolicies` method.
 * Finaly, you call the `solveProblem()` method and wait for the best solution to be shown.
 
-Isula internals
-------------------
-Here is a sequence diagram of the `solveProblem()` method, for you to get an idea on how isula works:
-
-![Alt text](https://github.com/cptanalatriste/isula/blob/master/resources/ACO_metaheuristic.png?raw=true "Title")
-
-Isula will provide you the basic execution flow for an algorithm in the ACO metaheuristic. On a common use case, you can rely on the implementations already available for `AcoProblemSolver` and `AntColony` but you are free to override and extend in case you need it. Take in mind that usually you will need to create your own `Ant` instance according to your project needs, however the base implementation already contains a lot of functionality available. If you need some reference, please take a look to the projects on the "Isula in action" section.
-
-Every ACO algorithm has a set of customized behaviours that are executed during the solution processes: this behaviours can have global impact (`DaemonAction` instances, like pheromone update rules) or only affect an ant and its solution (like component selection rules: they are subclasses of `AntPolicy`). Isula already provides this behaviours for some representative algorithms -take a look at the `isula.main.java.aco.algorithms` package- but you might be in the need of defining your own policies or extending the ones already available.
-
-Read abour Isula
----------------
-The Javadoc of every class on the framework is available here: http://cptanalatriste.github.io/isula/doc/
-
-Also, in this article Ant Colony Optimization algorithms are discussed and Isula is used to implement them in the Java Programming Language: http://www.codeproject.com/Articles/1011148/A-Java-Primer-of-Ant-Colony-Algorithms
-
-How to use this code
---------------------
-The code uploaded to this GitHub Repository corresponds to a Maven Java Project. As such, it is strongly recommended that you have Maven installed before working with Isula.
-
-After downloading - or cloning – the Isula code, just execute `mvn install` at the Isula folder to add it to your local repository. Once the Isula Project is installed in your Maven repository, you can use it as a dependency on your personal Ant Colony Optimization project by adding:
-
-```xml
-    <dependencies>
-        <dependency>
-            <groupId>isula</groupId>
-            <artifactId>isula</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
-```
-To your project `pom.xml` file. Or if you prefer, you can generate a JAR file of the framework if it is more convenient for you and use your IDE support for external libraries.
-
-Questions, issues or support?
-----------------------------
-Feel free to contact me at carlos.gavidia@pucp.edu.pe.
