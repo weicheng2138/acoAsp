@@ -3,10 +3,7 @@ package isula.aco;
 import isula.aco.exception.ConfigurationException;
 import isula.aco.exception.SolutionConstructionException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The little workers that build solutions: They belong to a colony. This is an
@@ -151,11 +148,60 @@ public abstract class Ant<C, E extends Environment> {
 
     /**
      * Selects a node and marks it as visited.
+     * Modify from AntForAsp
      *
      * @param environment           Environment where the ant is building a solution.
      * @param configurationProvider Configuration provider.
      */
     public void selectMergingNode(E environment, ConfigurationProvider configurationProvider) {}
+
+    /**
+     * Modify from AntForAsp
+     */
+    public double[] getVisualQualityArray() {
+        return null;
+    }
+
+    /**
+     * Modify from AntForAsp
+     */
+    public boolean setVisualQualityArray() {
+        return false;
+    }
+
+    /**
+     * Modify from AntForAsp
+     */
+    public Map<Integer, Integer> getLayerThicknessMap() {
+        return null;
+    }
+
+    /**
+     * Modify from AntForAsp
+     */
+    public boolean setLayerThicknessMap() {
+        return false;
+    }
+
+    /**
+     * Modify from AntForAsp
+     */
+    public List<C> getMergingNeighbourhood(E environment) {
+        return null;
+    }
+
+    /**
+     * Modify from AntForAsp
+     */
+    public void mergeLayer(Integer mergingNode) {}
+
+    /**
+     * Modify from AntForAsp
+     */
+    public double getTotalVisualQuality() {
+        return 0;
+    }
+
 
     /**
      * Improves the quality of the solution produced.

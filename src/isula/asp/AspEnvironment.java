@@ -3,6 +3,7 @@ package isula.asp;
 import isula.aco.Environment;
 import isula.aco.exception.InvalidInputException;
 import isula.tsp.TspEnvironment;
+import main.as.AspProblemConfiguration;
 
 import java.util.logging.Logger;
 
@@ -16,6 +17,9 @@ public class AspEnvironment extends Environment {
 
     private final int numberOfCities;
     private final double threshold;
+    private final double minThickness;
+    private final double maxThickness;
+
 
 
 
@@ -25,10 +29,12 @@ public class AspEnvironment extends Environment {
      * @param problemGraph Graph representation of the problem to be solved.
      * @throws InvalidInputException When the problem graph is incorrectly formed.
      */
-    public AspEnvironment(double[][] problemGraph, double threshold) throws InvalidInputException {
+    public AspEnvironment(double[][] problemGraph, AspProblemConfiguration configurationProvider) throws InvalidInputException {
         super(problemGraph);
         this.numberOfCities = problemGraph.length;
-        this.threshold = threshold;
+        this.threshold = configurationProvider.getThreshold();
+        this.minThickness = configurationProvider.getMinLayerThickness();
+        this.maxThickness = configurationProvider.getMaxLayerThickness();
         logger.info("Number of cities: " + numberOfCities);
     }
 
@@ -38,6 +44,14 @@ public class AspEnvironment extends Environment {
 
     public double getThreshold() {
         return threshold;
+    }
+
+    public double getMinThickness() {
+        return minThickness;
+    }
+
+    public double getMaxThickness() {
+        return maxThickness;
     }
 
     /**

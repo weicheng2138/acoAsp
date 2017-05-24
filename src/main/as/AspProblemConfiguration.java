@@ -35,7 +35,7 @@ public class AspProblemConfiguration implements ConfigurationProvider {
 
     @Override
     public int getNumberOfAnts() {
-        return 1;
+        return 10;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class AspProblemConfiguration implements ConfigurationProvider {
 
     @Override
     public int getNumberOfIterations() {
-        return 1;
+        return 1000;
     }
 
     @Override
@@ -66,15 +66,15 @@ public class AspProblemConfiguration implements ConfigurationProvider {
     /**
      * Maximum thickness for each layer
      */
-    public double getMaxLayerThickness() { return 0.1; }
+    public double getMaxLayerThickness() { return 3; }
 
     /**
      * Minimum thickness for each layer
      */
-    public double getMinLayerThickness() { return 0.01; }
+    public double getMinLayerThickness() { return 1; }
 
     /**
      * A threshold for reducing the proportion of visual quality
      */
-    public double getThreshold() { return 0.1; }
+    public double getThreshold() { return 0.2; }
 }

@@ -39,14 +39,14 @@ public class AcoAspWithIsula {
         }
 
         // Algorithm start from here
-        String fileName = "/Users/kevinhung/IdeaProjects/isula/resources/test.asp";
+        String fileName = "/Users/kevinhung/IdeaProjects/isula/resources/test4.asp";
         logger.info("fileName : " + fileName);
         double[][] problemRepresentation = getRepresentationFromFile(fileName);
         System.out.println(Arrays.deepToString(problemRepresentation));
 
         AspProblemConfiguration configurationProvider = new AspProblemConfiguration(problemRepresentation);
         AntColony<Integer, AspEnvironment> colony = getAntColony(configurationProvider);
-        AspEnvironment environment = new AspEnvironment(problemRepresentation, configurationProvider.getThreshold());
+        AspEnvironment environment = new AspEnvironment(problemRepresentation, configurationProvider);
 
         AcoProblemSolver<Integer, AspEnvironment> solver = new AcoProblemSolver<>();
         solver.initialize(environment, colony, configurationProvider);
@@ -55,6 +55,10 @@ public class AcoAspWithIsula {
         solver.getAntColony().addAntPolicies(new RandomNodeSelection<>(), new NodeMergingSelection<>());
 
         solver.solveProblem();
+        System.out.println(solver.getBestLayerThicknessMap());
+        System.out.println(Arrays.toString(solver.getEnvironment().getPheromoneMatrix()[0]));
+
+
 
     }
 
@@ -88,12 +92,11 @@ public class AcoAspWithIsula {
 
                     // TODO ant.isSolutionReady
                     while (!ant.isSolutionReady(environment)) {
-                        System.out.println("ant next: AntColony");
                         ant.selectNextNode(environment, configurationProvider);
                         ant.selectMergingNode(environment, configurationProvider);
                     }
 
-                    ant.doAfterSolutionIsReady(environment, configurationProvider);
+//                    ant.doAfterSolutionIsReady(environment, configurationProvider);
 
                     logger.log(Level.FINE,
                             "Solution is ready > Cost: " + ant.getSolutionCost(environment)
@@ -118,7 +121,7 @@ public class AcoAspWithIsula {
                                                   Integer solutionComponent,
                                                   AspEnvironment environment,
                                                   ConfigurationProvider configurationProvider) {
-                Double contribution = 1 / ant.getSolutionCost(environment);
+                Double contribution = 1 / (1 - ant.getTotalVisualQuality());
                 return ant.getPheromoneTrailValue(solutionComponent, positionInSolution, environment) + contribution;
             }
         };

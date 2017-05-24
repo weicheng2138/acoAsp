@@ -4,10 +4,7 @@ COMMENT: 5 locations in my mind (WeiCheng)
 DIMENSION: 5
 EDGE_WEIGHT_TYPE: EUC_2D
 NODE_COORD_SECTION
-1 0 0.1
-2 1 0.2
-3 2 0.1
-4 3 0.4
-5 4 0.2
+1 0 0.2
+2 1 0.3
+3 2 0.5
 EOF
-

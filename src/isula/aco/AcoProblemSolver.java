@@ -1,9 +1,7 @@
 package isula.aco;
 
 import javax.naming.ConfigurationException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,6 +25,7 @@ public class AcoProblemSolver<C, E extends Environment> {
     private C[] bestSolution;
     private double bestSolutionCost = 0.0;
     private String bestSolutionAsString = "";
+    private Map<Integer, Integer> bestLayerThicknessMap = new HashMap<>();
 
     private E environment;
     private AntColony<C, E> antColony;
@@ -146,8 +145,9 @@ public class AcoProblemSolver<C, E extends Environment> {
             bestSolution = bestAnt.getSolution().clone();
             bestSolutionCost = bestIterationCost;
             bestSolutionAsString = bestAnt.getSolutionAsString();
+            bestLayerThicknessMap = bestAnt.getLayerThicknessMap();
 
-            logger.fine("Best solution so far > Cost: " + bestSolutionCost
+            logger.fine("Best solution so far -> Cost: " + bestSolutionCost
                     + ", Solution: " + bestSolutionAsString);
 
         }
@@ -213,4 +213,7 @@ public class AcoProblemSolver<C, E extends Environment> {
         this.bestSolutionCost = bestSolutionCost;
     }
 
+    public Map<Integer, Integer> getBestLayerThicknessMap() {
+        return bestLayerThicknessMap;
+    }
 }

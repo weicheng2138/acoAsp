@@ -31,11 +31,16 @@ public abstract class OfflinePheromoneUpdate<C, E extends Environment> extends D
 
         for (Ant<C, E> ant : getAntColony().getHive()) {
             for (int i = 0; i < ant.getSolution().length; i++) {
-                C solutionComponent = ant.getSolution()[i];
-                double newPheromoneValue = this.getNewPheromoneValue(ant, i, solutionComponent,
-                        environment, configurationProvider);
-                ant.setPheromoneTrailValue(solutionComponent, i, environment,
-                        newPheromoneValue);
+                if (ant.getSolution()[i] == null) {
+                    break;
+                } else {
+                    C solutionComponent = ant.getSolution()[i];
+                    double newPheromoneValue = this.getNewPheromoneValue(ant, i, solutionComponent,
+                            environment, configurationProvider);
+                    ant.setPheromoneTrailValue(solutionComponent, i, environment,
+                            newPheromoneValue);
+                }
+
             }
         }
 

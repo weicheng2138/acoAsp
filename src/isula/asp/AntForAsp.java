@@ -4,7 +4,6 @@ import isula.aco.Ant;
 import isula.aco.AntPolicy;
 import isula.aco.AntPolicyType;
 import isula.aco.ConfigurationProvider;
-import isula.aco.exception.ConfigurationException;
 import isula.tsp.AntForTsp;
 
 import java.util.*;
@@ -34,6 +33,7 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
         this.visualQualityArray = new double[numberOfCities];
 
 
+
 //        for (int i = 0; i < numberOfCities; i++) {
 //            getLayerThicknessMap().put(i, 1);
 //        }
@@ -43,6 +43,7 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
     @Override
     public void clear() {
         super.clear();
+
         getLayerThicknessMap().clear();
         for (int i = 0; i < numberOfCities; i++) {
             getLayerThicknessMap().put(i, 1);
@@ -69,7 +70,35 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
      */
     @Override
     public boolean isSolutionReady(AspEnvironment environment) {
-        return getSolutionCost(environment) >= environment.getThreshold();
+//        for (Map.Entry<Integer, Integer> layerThickness : getLayerThicknessMap()
+//                .entrySet()) {
+//        }
+        System.out.println("isSolutionReady: ant next node*********************");
+        int counterRef = 0;
+        int counterRecord = 0;
+
+        for (int i = 0; i < numberOfCities; i++) {
+            for (int j = 0; j < numberOfCities; j++) {
+                if (i != j) {
+                    Integer layerThicknessA = getLayerThicknessMap().get(i);
+                    Integer layerThicknessB = getLayerThicknessMap().get(j);
+                    if (layerThicknessA > 0 && layerThicknessB > 0) {
+                        counterRef++;
+                        if (layerThicknessA + layerThicknessB > environment.getMaxThickness()) {
+                            counterRecord++;
+                        }
+                    }
+                }
+
+            }
+        }
+//        System.out.println("counterRef -> " + counterRef);
+//        System.out.println("counterRecord -> " + counterRecord);
+//        System.out.println(counterRef == counterRecord);
+//
+//        System.out.println("isSolutionReady: Threshold -> " + ((1 - getTotalVisualQuality()) >= environment.getThreshold()));
+//        System.out.println("isSolutionReady: counter -> " + (counterRef == counterRecord));
+        return (1 - getTotalVisualQuality()) >= environment.getThreshold() || counterRef == counterRecord;
     }
 
 
@@ -81,7 +110,21 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
      */
     @Override
     public double getSolutionCost(AspEnvironment environment) {
-        return 1 - getTotalVisualQuality();
+        double totalLayers = 0;
+
+        Iterator<Map.Entry<Integer, Integer>> layerThicknessIterator = this.getLayerThicknessMap()
+                .entrySet().iterator();
+        while (layerThicknessIterator.hasNext()) {
+            Map.Entry<Integer, Integer> componentWithlayerThickness = layerThicknessIterator
+                    .next();
+            Integer thickness = componentWithlayerThickness.getValue();
+
+            if (thickness > 0) {
+                totalLayers += 1;
+            }
+
+        }
+        return totalLayers;
     }
 
 
@@ -106,13 +149,13 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
 //        System.out.println(solutionComponent + ": AntForAsp");
 //        System.out.println(getVisualQuality(solutionComponent, environment.getProblemGraph()) + ": **AntForAsp");
         // TODO check for visual quality to be larger than 1 or not (not 1/distance right now -> return only distance)
-        return getVisualQualityArray()[solutionComponent]+ DELTA;
+        return 1 / getVisualQualityArray()[solutionComponent]+ DELTA;
     }
 
     /**
      * Just retrieves a value from the pheromone matrix.
      *
-     * @param solutionComponent  Solution component. (possibleMove)
+     * @param solutionComponent  Solution component for solution array. (possibleMove)
      * @param positionInSolution Position of this component in the solution. (getAnt().getCurrentIndex())
      * @param environment        Environment instance with problem information.
      * @return pheromoneMatrix
@@ -121,15 +164,13 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
     public Double getPheromoneTrailValue(Integer solutionComponent,
                                          Integer positionInSolution, AspEnvironment environment) {
 
-        Integer previousComponent = this.initialReference;
-        if (positionInSolution > 0) {
-            previousComponent = getSolution()[positionInSolution - 1];
-        }
+//        Integer previousComponent = this.initialReference;
+//        if (positionInSolution > 0) {
+//            previousComponent = getSolution()[positionInSolution - 1];
+//        }
 
         double[][] pheromoneMatrix = environment.getPheromoneMatrix();
-
-
-        return pheromoneMatrix[solutionComponent][previousComponent];
+        return pheromoneMatrix[0][solutionComponent];
     }
 
     /**
@@ -151,6 +192,40 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
         return neighbourhood;
     }
 
+    /**
+     * On TSP, the neighbourhood is given by the non-visited cities.
+     *
+     * @param environment Environment instance with problem information.
+     * @return List of neighbourhood
+     */
+    @Override
+    public List<Integer> getMergingNeighbourhood(AspEnvironment environment) {
+        List<Integer> neighbourhood = new ArrayList<>();
+
+        // RandomNodeSelection has already increased the currentIndex
+        Integer currentIndex = getCurrentIndex()-1;
+        Integer currentLayerIndex = getSolution()[currentIndex];
+
+        Integer upperTraceResult = upperTrace(currentLayerIndex, environment);
+        Integer lowerTraceResult = lowerTrace(currentLayerIndex, environment);
+
+//        System.out.println("getMergingNeighbourhood: currentIndex -> " + currentIndex);
+//        System.out.println("getMergingNeighbourhood: currentLayerIndex -> " + currentLayerIndex);
+//        System.out.println("getMergingNeighbourhood: upperTraceResult -> " + upperTraceResult);
+//        System.out.println("getMergingNeighbourhood: lowerTraceResult -> " + lowerTraceResult);
+
+
+        if (upperTraceResult != -1) {
+            neighbourhood.add(upperTraceResult);
+        }
+        if (lowerTraceResult != -1) {
+            neighbourhood.add(lowerTraceResult);
+        }
+
+//        System.out.println("getMergingNeighbourhood: neighbourhood size -> " + neighbourhood.size());
+        return neighbourhood;
+    }
+
 
     /**
      * Just updates the pheromone matrix.
@@ -163,14 +238,14 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
     @Override
     public void setPheromoneTrailValue(Integer solutionComponent, Integer positionInSolution,
                                        AspEnvironment environment, Double value) {
-        Integer previousComponent = this.initialReference;
-        if (positionInSolution > 0) {
-            previousComponent = getSolution()[positionInSolution - 1];
-        }
+//        Integer previousComponent = this.initialReference;
+//        if (positionInSolution > 0) {
+//            previousComponent = getSolution()[positionInSolution - 1];
+//        }
 
         double[][] pheromoneMatrix = environment.getPheromoneMatrix();
-        pheromoneMatrix[solutionComponent][previousComponent] = value;
-        pheromoneMatrix[previousComponent][solutionComponent] = value;
+        pheromoneMatrix[0][solutionComponent] = value;
+//        pheromoneMatrix[previousComponent][solutionComponent] = value;
 
     }
 
@@ -190,46 +265,49 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
         // TODO(cgavidia): With this approach, the policy is a shared resource
         // between ants. This doesn't allow parallelism.
         selectNodePolicy.setAnt(this);
+
+        // Return false -> merge nothing; true -> merge one layer
         boolean policyResult = selectNodePolicy.applyPolicy(environment, configurationProvider);
-        if (!policyResult) {
-            throw new ConfigurationException("The node selection policy " + selectNodePolicy.getClass().getName() +
-                    " wasn't able to select a node to merge.");
-        }
+//        if (!policyResult) {
+//            throw new ConfigurationException("The node selection policy " + selectNodePolicy.getClass().getName() +
+//                    " wasn't able to select a node to merge.");
+//        }
     }
 
     /**
      * merge the layer we just choose
      *
-     * @param visitedNode Node we choose from Node Selection Policy
-     * @param visitedLayer Layer we choose for the next merging
+     * @param mergingLayerIndex Node we choose to merge
      */
-    public void mergeLayer(Integer visitedNode, Integer visitedLayer) {
+    public void mergeLayer(Integer mergingLayerIndex) {
+
+        Integer currentIndex = getCurrentIndex()-1;
+        Integer currentLayerIndex = getSolution()[currentIndex];
+
+        System.out.println("mergeLayer: mergingLayerIndex -> " + mergingLayerIndex);
+        System.out.println("mergeLayer: currentLayerIndex -> " + currentLayerIndex);
+
+        // Modify LayerThicknessMap
+        Integer preThickness = getLayerThicknessMap().put(currentLayerIndex, 0);
+        Integer newThickness = getLayerThicknessMap().get(mergingLayerIndex) + preThickness;
+        getLayerThicknessMap().put(mergingLayerIndex, newThickness);
+
+        // Modify visualQualityArray: mergingNode Visual Quality & currentLayer Visual Quality
+        double mergingLayerVQ = getVisualQualityArray()[mergingLayerIndex];
+        double currentLayerVQ = getVisualQualityArray()[currentLayerIndex];
+        if (mergingLayerVQ > currentLayerVQ) {
+            getVisualQualityArray()[currentLayerIndex] = mergingLayerVQ;
+        } else if (currentLayerVQ > mergingLayerVQ) {
+            getVisualQualityArray()[mergingLayerIndex] = currentLayerVQ;
+        }
+
+        System.out.println("mergeLayer: mergeResult -> " + getLayerThicknessMap().toString());
 
     }
 
-//    /**
-//     * Mark a node that has been chosen for the next merging.
-//     *
-//     * @param choosingNode chosen node.
-//     */
-//    public void visitChoosingNode(Integer choosingNode, int currentIndex) {
-//
-//
-//        if (currentIndex < getChoosingRef().length) {
-//
-//            getChoosingRef()[currentIndex] = choosingNode;
-//        } else {
-//            throw new SolutionConstructionException("Couldn't add component "
-//                    + choosingNode.toString() + " at index " + currentIndex
-//                    + ": choosingRef length is: " + getChoosingRef().length
-//                    + ". \nPartial choosingRef is " + getChoosingRefAsString());
-//        }
-//
-//    }
-
     /**
      * Calculates the total visual quality.
-
+     *
      * @return Total visual quality.
      */
     public double getTotalVisualQuality() {
@@ -249,6 +327,54 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
 
         }
         return totalVisualQuality;
+    }
+
+    /**
+     * Trace upper through LayerThicknessMap util we get the layer is valid
+
+     * @return Layer index which is valid.
+     */
+    private Integer upperTrace(Integer startIndex, AspEnvironment environment) {
+        Integer traceResult = -1;
+        Integer startIndexThickness = getLayerThicknessMap().get(startIndex);
+
+        if (startIndex != 0) {
+            for (int i = startIndex-1; i >= 0; i--) {
+                if (getLayerThicknessMap().get(i) > 0 &&
+                        startIndexThickness + getLayerThicknessMap().get(i) <= environment.getMaxThickness()){
+                    traceResult = i;
+                    break;
+                } else if (getLayerThicknessMap().get(i) > 0 &&
+                        startIndexThickness + getLayerThicknessMap().get(i) > environment.getMaxThickness()){
+                    break;
+                }
+            }
+        }
+        return traceResult;
+    }
+
+    /**
+     * Trace lower through LayerThicknessMap util we get the layer is valid
+
+     * @return Layer index which is valid.
+     */
+    private Integer lowerTrace(Integer startIndex, AspEnvironment environment) {
+        Integer traceResult = -1;
+        Integer startIndexThickness = getLayerThicknessMap().get(startIndex);
+
+        if (startIndex != numberOfCities-1){
+            for (int i = startIndex+1; i < numberOfCities; i++) {
+                if (getLayerThicknessMap().get(i) > 0 &&
+                        startIndexThickness + getLayerThicknessMap().get(i) <= environment.getMaxThickness()){
+                    traceResult = i;
+                    break;
+                } else if (getLayerThicknessMap().get(i) > 0 &&
+                        startIndexThickness + getLayerThicknessMap().get(i) > environment.getMaxThickness()){
+                    break;
+                }
+            }
+        }
+        return traceResult;
     }
 
 

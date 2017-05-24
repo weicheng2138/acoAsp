@@ -5,12 +5,8 @@ import isula.aco.AntPolicyType;
 import isula.aco.ConfigurationProvider;
 import isula.aco.Environment;
 import isula.aco.exception.ConfigurationException;
-import isula.aco.exception.SolutionConstructionException;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by kevinhung on 2017/4/21.
@@ -35,28 +31,31 @@ public class NodeMergingSelection<C, E extends Environment>
         HashMap<C, Double> componentsWithProbabilities = this
                 .getComponentsWithProbabilities(environment, configurationProvider);
 
-        Iterator<Map.Entry<C, Double>> componentWithProbabilitiesIterator = componentsWithProbabilities
-                .entrySet().iterator();
-        while (componentWithProbabilitiesIterator.hasNext()) {
-            Map.Entry<C, Double> componentWithProbability = componentWithProbabilitiesIterator
-                    .next();
+        if (componentsWithProbabilities.size() > 0) {
+            Iterator<Map.Entry<C, Double>> componentWithProbabilitiesIterator = componentsWithProbabilities
+                    .entrySet().iterator();
+            while (componentWithProbabilitiesIterator.hasNext()) {
+                Map.Entry<C, Double> componentWithProbability = componentWithProbabilitiesIterator
+                        .next();
 
-            Double probability = componentWithProbability.getValue();
-            if (probability.isNaN()) {
-                throw new ConfigurationException("The probability for component " + componentWithProbability.getKey() +
-                        " is not a number.");
-            }
+                Double probability = componentWithProbability.getValue();
+                if (probability.isNaN()) {
+                    throw new ConfigurationException("The probability for component " + componentWithProbability.getKey() +
+                            " is not a number.");
+                }
 
-            total += probability;
+                total += probability;
 
-            // in terms of accumulation of probability to achieve randomly choose one city
-            if (total >= value) {
-                nextNode = componentWithProbability.getKey();
-                getAnt().visitNode(nextNode);
+                // Merge action is over here!!!
+                if (total >= value) {
+                    nextNode = componentWithProbability.getKey();
+                    getAnt().mergeLayer((Integer) nextNode);
 
-                return true;
+                    return true;
+                }
             }
         }
+
 
         return false;
     }
@@ -73,22 +72,23 @@ public class NodeMergingSelection<C, E extends Environment>
                                                              ConfigurationProvider configurationProvider) {
         HashMap<C, Double> componentsWithProbabilities = new HashMap<C, Double>();
 
+        System.out.println("getComponentsWithProbabilities: getVisualQualityArray -> " + Arrays.toString(getAnt().getVisualQualityArray()));
+        System.out.println("getComponentsWithProbabilities: getLayerThicknessMap -> " + getAnt().getLayerThicknessMap());
+
+
         double denominator = Double.MIN_VALUE;
-        // getAnt().getNeighbourhood(environment) directly gain the unvisited index of city
-        for (C possibleMove : getAnt().getNeighbourhood(environment)) {
+        for (C possibleMove : getAnt().getMergingNeighbourhood(environment)) {
 
-            if (!getAnt().isNodeVisited(possibleMove)
-                    && getAnt().isNodeValid(possibleMove)) {
+            // heuristicTimesPheromone -> { η*τ }
+            Double heuristicTimesPheromone = getHeuristicTimesPheromone(
+                    environment, configurationProvider, possibleMove);
+            denominator += heuristicTimesPheromone;
 
-                // heuristicTimesPheromone -> { η*τ }
-                Double heuristicTimesPheromone = getHeuristicTimesPheromone(
-                        environment, configurationProvider, possibleMove);
-                denominator += heuristicTimesPheromone;
+            // giving hashmap with valid exact city index that may head to
+            componentsWithProbabilities.put(possibleMove, 0.0);
 
-                // giving hashmap with valid exact city index that may head to
-                componentsWithProbabilities.put(possibleMove, 0.0);
-            }
         }
+
 
 
         Double totalProbability = 0.0;
@@ -107,8 +107,9 @@ public class NodeMergingSelection<C, E extends Environment>
             componentWithProbability.setValue(probability);
         }
 
+        // Cannot find any layer to merge
         if (componentsWithProbabilities.size() < 1) {
-            return doIfNoComponentsFound(environment, configurationProvider);
+            return componentsWithProbabilities;
         }
         double delta = 0.001;
         if (Math.abs(totalProbability - 1.0) > delta) {
@@ -119,17 +120,6 @@ public class NodeMergingSelection<C, E extends Environment>
         return componentsWithProbabilities;
     }
 
-
-    protected HashMap<C, Double> doIfNoComponentsFound(E environment,
-                                                       ConfigurationProvider configurationProvider) {
-        throw new SolutionConstructionException(
-                "We have no suitable components to add to the solution from current position."
-                        + "\n Previous Component: "
-                        + getAnt().getSolution()[getAnt().getCurrentIndex() - 1]
-                        + " at position " + (getAnt().getCurrentIndex() - 1)
-                        + "\n Environment: " + environment.toString()
-                        + "\nPartial solution : " + getAnt().getSolutionAsString());
-    }
 
     private Double getHeuristicTimesPheromone(E environment,
                                               ConfigurationProvider configurationProvider, C possibleMove) {
@@ -142,8 +132,6 @@ public class NodeMergingSelection<C, E extends Environment>
                 getAnt().getCurrentIndex(),
                 environment
         );
-
-
 
         // pheromoneTrailValue: { τ }
         Double pheromoneTrailValue = getAnt().getPheromoneTrailValue(
