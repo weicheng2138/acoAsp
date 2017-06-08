@@ -12,6 +12,7 @@ import isula.tsp.TspEnvironment;
 import javax.naming.ConfigurationException;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
@@ -64,6 +65,7 @@ public class AcoTspWithIsula {
         solver.getAntColony().addAntPolicies(new RandomNodeSelection<>());
         solver.solveProblem();
 
+        System.out.println(Arrays.deepToString(solver.getEnvironment().getPheromoneMatrix()));
 
 
 

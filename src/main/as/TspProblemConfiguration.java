@@ -45,7 +45,7 @@ public class TspProblemConfiguration implements ConfigurationProvider {
 
     @Override
     public int getNumberOfAnts() {
-        return 1;
+        return 30;
     } //30
 
     @Override
@@ -55,7 +55,7 @@ public class TspProblemConfiguration implements ConfigurationProvider {
 
     @Override
     public int getNumberOfIterations() {
-        return 2;
+        return 50;
     } //50
 
     @Override

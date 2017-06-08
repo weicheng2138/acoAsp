@@ -8,6 +8,7 @@ import isula.aco.ConfigurationProvider;
 public class AspProblemConfiguration implements ConfigurationProvider {
 
     private double initialPheromoneValue;
+    private double initialVisualQuality;
 
     /**
      * In the algorithm described in the book, the initial pheromone value was a function of the quality of a
@@ -28,6 +29,7 @@ public class AspProblemConfiguration implements ConfigurationProvider {
             randomQuality += problemRepresentation[i][1];
         }
 
+        this.initialVisualQuality = randomQuality;
         // TODO after making sure of calculation of VS, remember to deal with which need to be diameter
         this.initialPheromoneValue =  randomQuality / numberOfLayers;
     }
@@ -40,7 +42,7 @@ public class AspProblemConfiguration implements ConfigurationProvider {
 
     @Override
     public double getEvaporationRatio() {
-        return 1-0.6;
+        return 1-0.5;
     }
 
     @Override
@@ -56,17 +58,17 @@ public class AspProblemConfiguration implements ConfigurationProvider {
     @Override
     public double getHeuristicImportance() {
         return 2.5;
-    }
+    } //2.5
 
     @Override
     public double getPheromoneImportance() {
-        return 1;
-    }
+        return 10;
+    } //1
 
     /**
      * Maximum thickness for each layer
      */
-    public double getMaxLayerThickness() { return 3; }
+    public double getMaxLayerThickness() { return 4; }
 
     /**
      * Minimum thickness for each layer
@@ -74,7 +76,13 @@ public class AspProblemConfiguration implements ConfigurationProvider {
     public double getMinLayerThickness() { return 1; }
 
     /**
+     * Initial Visual Quality of a model
+     */
+    public double getInitialVisualQuality() { return this.initialVisualQuality; }
+
+    /**
      * A threshold for reducing the proportion of visual quality
      */
     public double getThreshold() { return 0.2; }
+
 }

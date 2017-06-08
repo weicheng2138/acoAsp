@@ -24,6 +24,7 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
     private double[] visualQualityArray;
 
 
+
     public AntForAsp(int numberOfCities, double[][] problemGraph) {
         super();
         this.numberOfCities = numberOfCities;
@@ -73,7 +74,7 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
 //        for (Map.Entry<Integer, Integer> layerThickness : getLayerThicknessMap()
 //                .entrySet()) {
 //        }
-        System.out.println("isSolutionReady: ant next node*********************");
+//        System.out.println("isSolutionReady: ant next node*********************");
         int counterRef = 0;
         int counterRecord = 0;
 
@@ -89,7 +90,6 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
                         }
                     }
                 }
-
             }
         }
 //        System.out.println("counterRef -> " + counterRef);
@@ -98,7 +98,11 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
 //
 //        System.out.println("isSolutionReady: Threshold -> " + ((1 - getTotalVisualQuality()) >= environment.getThreshold()));
 //        System.out.println("isSolutionReady: counter -> " + (counterRef == counterRecord));
-        return (1 - getTotalVisualQuality()) >= environment.getThreshold() || counterRef == counterRecord;
+
+//        System.out.println(((environment.getInitialVisualQuality()-getTotalVisualQuality())/environment.getInitialVisualQuality()));
+        return ((environment.getInitialVisualQuality()-getTotalVisualQuality())/environment.getInitialVisualQuality())
+                >= environment.getThreshold()
+                || counterRef == counterRecord;
     }
 
 
@@ -284,8 +288,8 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
         Integer currentIndex = getCurrentIndex()-1;
         Integer currentLayerIndex = getSolution()[currentIndex];
 
-        System.out.println("mergeLayer: mergingLayerIndex -> " + mergingLayerIndex);
-        System.out.println("mergeLayer: currentLayerIndex -> " + currentLayerIndex);
+//        System.out.println("mergeLayer: mergingLayerIndex -> " + mergingLayerIndex);
+//        System.out.println("mergeLayer: currentLayerIndex -> " + currentLayerIndex);
 
         // Modify LayerThicknessMap
         Integer preThickness = getLayerThicknessMap().put(currentLayerIndex, 0);
@@ -301,7 +305,7 @@ public class AntForAsp extends Ant<Integer, AspEnvironment> {
             getVisualQualityArray()[mergingLayerIndex] = currentLayerVQ;
         }
 
-        System.out.println("mergeLayer: mergeResult -> " + getLayerThicknessMap().toString());
+//        System.out.println("mergeLayer: mergeResult -> " + getLayerThicknessMap().toString());
 
     }
 

@@ -72,12 +72,13 @@ public class NodeMergingSelection<C, E extends Environment>
                                                              ConfigurationProvider configurationProvider) {
         HashMap<C, Double> componentsWithProbabilities = new HashMap<C, Double>();
 
-        System.out.println("getComponentsWithProbabilities: getVisualQualityArray -> " + Arrays.toString(getAnt().getVisualQualityArray()));
-        System.out.println("getComponentsWithProbabilities: getLayerThicknessMap -> " + getAnt().getLayerThicknessMap());
+//        System.out.println("getComponentsWithProbabilities: getVisualQualityArray -> " + Arrays.toString(getAnt().getVisualQualityArray()));
+//        System.out.println("getComponentsWithProbabilities: getLayerThicknessMap -> " + getAnt().getLayerThicknessMap());
 
 
         double denominator = Double.MIN_VALUE;
         for (C possibleMove : getAnt().getMergingNeighbourhood(environment)) {
+//            System.out.println("possibleMove -> " + possibleMove);
 
             // heuristicTimesPheromone -> { η*τ }
             Double heuristicTimesPheromone = getHeuristicTimesPheromone(
@@ -88,21 +89,31 @@ public class NodeMergingSelection<C, E extends Environment>
             componentsWithProbabilities.put(possibleMove, 0.0);
 
         }
+//        System.out.println("neighborhood number -> " + getAnt().getMergingNeighbourhood(environment).size());
+//        System.out.println("denominator -> " + denominator);
+
 
 
 
         Double totalProbability = 0.0;
         Iterator<Map.Entry<C, Double>> componentWithProbabilitiesIterator = componentsWithProbabilities
                 .entrySet().iterator();
+
+//        System.out.println("componentsWithProbabilities size -> " + componentsWithProbabilities.size());
         while (componentWithProbabilitiesIterator.hasNext()) {
             Map.Entry<C, Double> componentWithProbability = componentWithProbabilitiesIterator
                     .next();
             C component = componentWithProbability.getKey();
+//            System.out.println("component -> " + component);
 
             Double numerator = getHeuristicTimesPheromone(
                     environment, configurationProvider, component);
+
+//            System.out.println("numerator -> " + numerator);
             Double probability = numerator / denominator;
+//            System.out.println("-------------------------------------------------------" + probability);
             totalProbability += probability;
+
 
             componentWithProbability.setValue(probability);
         }

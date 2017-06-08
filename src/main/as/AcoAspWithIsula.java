@@ -39,10 +39,16 @@ public class AcoAspWithIsula {
         }
 
         // Algorithm start from here
-        String fileName = "/Users/kevinhung/IdeaProjects/isula/resources/test4.asp";
+        String fileName = "/Users/kevinhung/IdeaProjects/isula/resources/camelTest.asp";
         logger.info("fileName : " + fileName);
-        double[][] problemRepresentation = getRepresentationFromFile(fileName);
+        double[][] problemRepresentation = getRepresentationFromASPFile(fileName);
         System.out.println(Arrays.deepToString(problemRepresentation));
+
+//        String fileName = "/Users/kevinhung/IdeaProjects/isula/resources/test4.asp";
+//        double[][] problemRepresentation = getRepresentationFromFile(fileName);
+//        System.out.println(Arrays.deepToString(problemRepresentation));
+
+
 
         AspProblemConfiguration configurationProvider = new AspProblemConfiguration(problemRepresentation);
         AntColony<Integer, AspEnvironment> colony = getAntColony(configurationProvider);
@@ -94,10 +100,19 @@ public class AcoAspWithIsula {
                     while (!ant.isSolutionReady(environment)) {
                         ant.selectNextNode(environment, configurationProvider);
                         ant.selectMergingNode(environment, configurationProvider);
+
+//                        if (ant.getVisited().size() != environment.getNumberOfCities()) {
+//                            ant.selectNextNode(environment, configurationProvider);
+//                            ant.selectMergingNode(environment, configurationProvider);
+//                        }
+
                     }
 
 //                    ant.doAfterSolutionIsReady(environment, configurationProvider);
 
+//                    System.out.println(ant.getSolutionAsString());
+//                    System.out.println(ant.getSolutionCost(environment));
+//                    System.out.println(ant.getVisited().size());
                     logger.log(Level.FINE,
                             "Solution is ready > Cost: " + ant.getSolutionCost(environment)
                                     + ", Solution: " + ant.getSolutionAsString());
@@ -148,6 +163,30 @@ public class AcoAspWithIsula {
         for (int index = 0; index < xCoordinates.size(); index += 1) {
             representation[index][0] = xCoordinates.get(index);
             representation[index][1] = yCoordinates.get(index);
+
+        }
+
+        return representation;
+    }
+
+    public static double[][] getRepresentationFromASPFile(String fileName) throws IOException {
+        List<Double> saliencyContents = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                String[] tokens = line.split(" ");
+
+                if (tokens.length == 1) {
+                    saliencyContents.add(Double.parseDouble(tokens[0]));
+                }
+            }
+        }
+
+        double[][] representation = new double[saliencyContents.size()][2];
+        for (int index = 0; index < saliencyContents.size(); index += 1) {
+            representation[index][0] = index;
+            representation[index][1] = saliencyContents.get(index);
 
         }
 

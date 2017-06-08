@@ -5,7 +5,6 @@ import isula.aco.DaemonAction;
 import isula.aco.DaemonActionType;
 import isula.aco.Environment;
 
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 /**
@@ -38,7 +37,7 @@ public class StartPheromoneMatrix<C, E extends Environment> extends
         logger.info("Initial pheromone value: " + initialPheromoneValue);
 
         getEnvironment().populatePheromoneMatrix(initialPheromoneValue);
-        logger.fine("Pheromone matrix after initilizatation :" + Arrays.deepToString(getEnvironment().getPheromoneMatrix()));
+//        logger.fine("Pheromone matrix after initilizatation :" + Arrays.deepToString(getEnvironment().getPheromoneMatrix()));
     }
 
     protected double getInitialPheromoneValue(

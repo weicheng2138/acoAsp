@@ -17,6 +17,7 @@ public class AspEnvironment extends Environment {
 
     private final int numberOfCities;
     private final double threshold;
+    private final double initialVisualQuality;
     private final double minThickness;
     private final double maxThickness;
 
@@ -33,6 +34,7 @@ public class AspEnvironment extends Environment {
         super(problemGraph);
         this.numberOfCities = problemGraph.length;
         this.threshold = configurationProvider.getThreshold();
+        this.initialVisualQuality = configurationProvider.getInitialVisualQuality();
         this.minThickness = configurationProvider.getMinLayerThickness();
         this.maxThickness = configurationProvider.getMaxLayerThickness();
         logger.info("Number of cities: " + numberOfCities);
@@ -52,6 +54,10 @@ public class AspEnvironment extends Environment {
 
     public double getMaxThickness() {
         return maxThickness;
+    }
+
+    public double getInitialVisualQuality() {
+        return initialVisualQuality;
     }
 
     /**

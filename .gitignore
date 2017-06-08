@@ -36,7 +36,7 @@ Icon
 .Spotlight-V100
 .Trashes
 /target/
-/idea/
+/.idea/
 /.settings/
 /bin/
 

@@ -111,6 +111,7 @@ public class AcoProblemSolver<C, E extends Environment> {
             applyDaemonActions(DaemonActionType.AFTER_ITERATION_CONSTRUCTION);
 
             updateBestSolution(environment);
+
             logger.info("Current iteration: " + iteration + " Best solution cost: " + bestSolutionCost);
 
             iteration++;
@@ -128,6 +129,20 @@ public class AcoProblemSolver<C, E extends Environment> {
     }
 
     /**
+     * Distinguish whether the system exits stagnation behavior
+     *
+     * @throws ConfigurationException If algorithm parameters aren't properly configured.
+     */
+    public Integer distinguishASPStagnation() {
+        logger.info("Starting distinguish whether stagnation exists at");
+
+
+
+        return null;
+
+    }
+
+    /**
      * Updates the information of the best solution produced with the solutions
      * produced by the Colony.
      *
@@ -140,6 +155,9 @@ public class AcoProblemSolver<C, E extends Environment> {
         Double bestIterationCost = bestAnt.getSolutionCost(environment);
         logger.fine("Iteration best cost: " + bestIterationCost);
 
+        System.out.println("bestAnt of each iteration: " + bestAnt.getSolutionAsString());
+        System.out.println("number of layers: " + bestAnt.getSolutionCost(environment));
+//        System.out.println("layerThicknessMapping: " + bestAnt.getLayerThicknessMap().toString());
         if (bestSolution == null
                 || bestSolutionCost > bestIterationCost) {
             bestSolution = bestAnt.getSolution().clone();

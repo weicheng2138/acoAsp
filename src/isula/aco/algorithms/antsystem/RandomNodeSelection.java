@@ -111,8 +111,6 @@ public class RandomNodeSelection<C, E extends Environment> extends
             componentWithProbability.setValue(probability);
         }
 
-        System.out.println(componentsWithProbabilities.toString());
-
         if (componentsWithProbabilities.size() < 1) {
             return doIfNoComponentsFound(environment, configurationProvider);
         }
